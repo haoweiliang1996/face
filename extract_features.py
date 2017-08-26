@@ -46,6 +46,11 @@ sp = dlib.shape_predictor(predictor_path)
 facerec = dlib.face_recognition_model_v1(face_rec_model_path)
 win = dlib.image_window()
 def get_features(faces_folder_path):
+    """
+        get all features of pics in one folder
+    :param faces_folder_path:
+    :return: None
+    """
     # Now process all the images
     res = []
     for f in glob.glob(os.path.join(faces_folder_path, "*.jpg")):
@@ -134,5 +139,5 @@ if __name__ == '__main__':
             win.add_overlay(shape)
             dlib.hit_enter_to_continue()
             from sklearn.linear_model import LogisticRegression
-        #np.save("dlib_feature_val",np.array(res_all))
     '''
+    np.save("dlib_feature_val",np.array(res_all))
