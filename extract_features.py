@@ -56,6 +56,7 @@ def get_features(faces_folder_path):
     for f in glob.glob(os.path.join(faces_folder_path, "*.jpg")):
         print("Processing file: {}".format(f))
         img = io.imread(f)
+        img = cv2.cvtColor(img,cv2.COLOR_GRAY2RGB)
         win.clear_overlay()
         win.set_image(img)
         # Ask the detector to find the bounding boxes of each face. The 1 in the
@@ -80,8 +81,11 @@ def get_features(faces_folder_path):
             # distance between them less than 0.6 then they are from the same
             # person, otherwise they are from different people.  He we just print
             # the vector to the screen.
-            face_descriptor = facerec.compute_face_descriptor(img, shape)
-            res.append(np.array(face_descriptor))
+            try:
+                face_descriptor = facerec.compute_face_descriptor(img, shape)
+                res.append(np.array(face_descriptor))
+            except Exception:
+                print('error {}'.format(f))
             # It should also be noted that you can also call this function like this:
             #  face_descriptor = facerec.compute_face_descriptor(img, shape, 100)
             # The version of the call without the 100 gets 99.13% accuracy on LFW
@@ -95,15 +99,21 @@ def get_features(faces_folder_path):
             # LFW accuracy of 99.3%.
 
 
-            dlib.hit_enter_to_continue()
-    res_all.append(res)
+            #dlib.hit_enter_to_continue()
+    res_all.append(res[:5])
+    res_all.append([])
+    print('len of lhw',len(res))
 import matplotlib.pyplot as plt
 if __name__ == '__main__':
+    '''
     data_dir = '/home/haowei/face/facedata0820/ver_training'
     data_dir = '/home/haowei/face/facedata0820/tmp'
     for i in os.listdir(data_dir):
         print(i)
         get_features(os.path.join(data_dir,i))
+    '''
+    get_features('/home/haowei/face/face/facedata0820/testface/lhw')
+    np.save("lhw_dlib_feature",np.array(res_all))
     '''
     camera = cv2.VideoCapture(0)
     while True:
@@ -140,4 +150,4 @@ if __name__ == '__main__':
             dlib.hit_enter_to_continue()
             from sklearn.linear_model import LogisticRegression
     '''
-    np.save("dlib_feature_val",np.array(res_all))
+    #np.save("dlib_feature_val",np.array(res_all))
